@@ -1,0 +1,8 @@
+target/
+.classpath
+.project
+electricityCalculatorTesting.eml
+electricityCalculatorTesting.iml
+electricityCalculatorTesting.userlibraries
+.idea/
+.settings/

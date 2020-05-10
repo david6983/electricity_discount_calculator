@@ -6,12 +6,12 @@ import java.io.*;
 import java.text.DecimalFormat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Verify the Electricity discount calculator class")
 public class ElectricityDiscountCalcTest {
     private DecimalFormat df2;
-    
+
     @BeforeEach
     public void beforeEach() {
         df2 = new DecimalFormat("#.##");
@@ -170,6 +170,11 @@ public class ElectricityDiscountCalcTest {
             System.setOut(new PrintStream(testOut));
         }
 
+        private void clearOutput() {
+            testOut = new ByteArrayOutputStream();
+            System.setOut(new PrintStream(testOut));
+        }
+
         private void provideInput(String data) {
             testIn = new ByteArrayInputStream(data.getBytes());
             System.setIn(testIn);
@@ -193,18 +198,22 @@ public class ElectricityDiscountCalcTest {
                 double taxDisc,
                 double amountDiscWithTaxDisc,
                 double totalSaving,
-                boolean isNonResidential
+                boolean isNonResidential,
+                String sector
         ) {
             String nonResidentialType = "";
+            String residential = "Residential ";
+            String sectorDisplayed = sector == null ? "" : " ".concat(sector);
 
             if (isNonResidential) {
                 nonResidentialType = "Enter Type of Sector(Hotel/Travel/Commercial/Industrial): ";
+                residential = "Non-Residential";
             }
 
             return "Enter 0 to stop; 1 to continue Enter Type of Customer (Residential/Non-Residential): " +
-                    nonResidentialType + "Enter electricity consumption (kWh): \n" +
+                    "Enter electricity consumption (kWh): " + nonResidentialType + "\n" +
                     "-------------- UNDERSTAND YOUR ELECTRICTIY BIL -------------- \n" +
-                    "Tariff: Residential \n" +
+                    "Tariff: " + residential  + sectorDisplayed + "\n" +
                     "\n" +
                     "Total Electricity Bil without Tax: " + df.format(amount) + "\n" +
                     "Total Electricity Tax: " + df.format(tax) + "\n" +
@@ -227,6 +236,7 @@ public class ElectricityDiscountCalcTest {
         @Test
         @DisplayName("[Integration Test - Main][TC1] user_type = Residential AND 0 kWh <= consumption <= 200 kWh")
         public void main_integration_testCase1() {
+
             provideInput("1\nResidential\n199\n0\n");
 
             ElectricityDiscountCalc.main(null);
@@ -239,71 +249,335 @@ public class ElectricityDiscountCalcTest {
                     0,
                     21.691,
                     21.691,
-                    false
+                    false,
+                    null
             ), getOutput());
-            /*
+
+
+            clearOutput();
+
             provideInput("1\nResidential\n200\n0\n");
 
             ElectricityDiscountCalc.main(null);
 
             assertEquals(generateOutputTestingTemplateResidential(
-                    43.382,
+                    43.6,
                     0,
-                    43.382,
-                    21.691,
+                    43.6,
+                    21.8,
                     0,
-                    21.691,
-                    21.691,
-                    false
-            ), getOutput());*/
+                    21.8,
+                    21.8,
+                    false,
+                    null
+            ), getOutput());
         }
 
         @Test
         @DisplayName("[Integration Test - Main][TC2] user_type = Residential AND 200 kWh < consumption <= 300 kWh")
         public void main_integration_testCase2() {
+            provideInput("1\nResidential\n201\n0\n");
 
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    43.818,
+                    0,
+                    43.818,
+                    21.909,
+                    0,
+                    21.909,
+                    21.909,
+                    false,
+                    null
+            ), getOutput());
+
+            clearOutput();
+
+            provideInput("1\nResidential\n299\n0\n");
+
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    76.666,
+                    0,
+                    76.666,
+                    46.5995,
+                    0,
+                    46.5995,
+                    30.0665,
+                    false,
+                    null
+            ), getOutput());
+
+            clearOutput();
+
+            provideInput("1\nResidential\n300\n0\n");
+
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    77,
+                    0,
+                    77,
+                    46.85,
+                    0,
+                    46.85,
+                    30.15,
+                    false,
+                    null
+            ), getOutput());
         }
 
         @Test
         @DisplayName("[Integration Test - Main][TC3] user_type = Residential AND 300 kWh < consumption <= 600 kWh")
         public void main_integration_testCase3() {
+            provideInput("1\nResidential\n301\n0\n");
 
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    77.334,
+                    0,
+                    77.334,
+                    47.10005,
+                    0,
+                    47.10005,
+                    30.2335,
+                    false,
+                    null
+            ), getOutput());
+
+            clearOutput();
+
+            provideInput("1\nResidential\n599\n0\n");
+
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    231.284,
+                    0,
+                    231.284,
+                    177.9914,
+                    0,
+                    177.9914,
+                    53.2926,
+                    false,
+                    null
+            ), getOutput());
+
+            clearOutput();
+
+            provideInput("1\nResidential\n600\n0\n");
+
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    231.8,
+                    0,
+                    231.8,
+                    178.43,
+                    0,
+                    178.43,
+                    53.37,
+                    false,
+                    null
+            ), getOutput());
         }
 
         @Test
         @DisplayName("[Integration Test - Main][TC4] user_type = Residential AND 600 kWh < consumption <= 900 kWh")
         public void main_integration_testCase4() {
+            provideInput("1\nResidential\n601\n0\n");
 
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    232.316,
+                    0.03096,
+                    232.34696,
+                    178.8686,
+                    0.026316,
+                    178.894916,
+                    53.452044,
+                    false,
+                    null
+            ), getOutput());
+
+            clearOutput();
+
+            provideInput("1\nResidential\n899\n0\n");
+
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    395.054,
+                    9.79524,
+                    404.84924,
+                    338.41892,
+                    9.5993352,
+                    348.0182552,
+                    56.8309848,
+                    false,
+                    null
+            ), getOutput());
+
+            clearOutput();
+
+            provideInput("1\nResidential\n900\n0\n");
+
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    395.6,
+                    9.828,
+                    405.428,
+                    338.954,
+                    9.63144,
+                    348.58544,
+                    56.84256,
+                    false,
+                    null
+            ), getOutput());
         }
 
         @Test
         @DisplayName("[Integration Test - Main][TC5] user_type = Residential AND consumption > 900 kWh")
         public void main_integration_testCase5() {
+            provideInput("1\nResidential\n901\n0\n");
 
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    396.146,
+                    9.86076,
+                    406.00676,
+                    339.48908,
+                    9.6635448,
+                    349.1526248,
+                    56.8541352,
+                    false,
+                    null
+            ), getOutput());
         }
 
         @Test
         @DisplayName("[Integration Test - Main][TC6] user_type = Non-Residential AND consumption > 600 kWh AND sector_type = Hotel or Travel")
         public void main_integration_testCase6() {
+            provideInput("1\nNon-Residential\n601\nHotel\n0\n");
 
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    291.109,
+                    3.55854,
+                    294.66754,
+                    247.44265,
+                    4.140759,
+                    251.583409,
+                    43.084131,
+                    true,
+                    "Hotel"
+            ), getOutput());
         }
 
         @Test
         @DisplayName("[Integration Test - Main][TC7] user_type = Non-Residential AND consumption <= 600 kWh AND sector_type = Hotel or Travel")
         public void main_integration_testCase7() {
+            provideInput("1\nNon-Residential\n599\nTravel\n0\n");
 
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    290.091,
+                    0,
+                    290.091,
+                    246.57735,
+                    0,
+                    246.57735,
+                    43.51365,
+                    true,
+                    "Travel"
+            ), getOutput());
+
+            clearOutput();
+
+            provideInput("1\nNon-Residential\n600\nTravel\n0\n");
+
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    290.6,
+                    0,
+                    290.6,
+                    247.01,
+                    0,
+                    247.01,
+                    43.59,
+                    true,
+                    "Travel"
+            ), getOutput());
         }
 
         @Test
         @DisplayName("[Integration Test - Main][TC8] user_type = Non-Residential AND consumption > 600 kWh AND sector_type = Commercial or Industrial")
         public void main_integration_testCase8() {
+            provideInput("1\nNon-Residential\n601\nCommercial\n0\n");
 
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    291.109,
+                    3.55854,
+                    294.66754,
+                    285.28682,
+                    6.4114092,
+                    291.6982292,
+                    2.9693108,
+                    true,
+                    "Commercial"
+            ), getOutput());
         }
 
         @Test
         @DisplayName("[Integration Test - Main][TC9] user_type = Non-Residential AND consumption <= 600 kWh AND sector_type = Commercial or Industrial")
         public void main_integration_testCase9() {
+            provideInput("1\nNon-Residential\n600\nIndustrial\n0\n");
 
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(generateOutputTestingTemplateResidential(
+                    290.6,
+                    0,
+                    290.6,
+                    284.788,
+                    0,
+                    284.788,
+                    5.812,
+                    true,
+                    "Industrial"
+            ), getOutput());
+        }
+
+        @Test
+        @DisplayName("[Integration Test - Main][TC10] user_type = Non-Residential AND sector_type is wrong")
+        public void main_integration_testCase10() {
+            String output = "Enter 0 to stop; 1 to continue Enter Type of Customer " +
+                    "(Residential/Non-Residential): Enter electricity consumption (kWh): " +
+                    "Enter Type of Sector(Hotel/Travel/Commercial/Industrial): Wrong Sector Type!!!\n" +
+                    "Enter 0 to stop; 1 to continue \n" +
+                    "You chose to STOP!!!\n";
+
+            provideInput("1\nNon-Residential\n600\nLorem\n0\n");
+
+            ElectricityDiscountCalc.main(null);
+
+            assertEquals(output, getOutput());
+        }
+
+        @Test
+        public void classShouldInstantiateMainClass() {
+            assertTrue((new ElectricityDiscountCalc()) instanceof ElectricityDiscountCalc);
         }
     }
 }
